@@ -1,9 +1,38 @@
-import React from 'react'
+"use client";
+
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import api from '@/lib/api'
+import ProductCard from '../common/ProductCard'
+
+interface Product {
+    id: number;
+    title: string;
+    price: number;
+    images: string[];
+}
 
 const Hero = () => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await api.get('/products?categoryId=4&offset=0&limit=4');
+                setProducts(response.data);
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
     return (
-        <section className="max-w-[1400px] mx-auto px-6 py-12 flex flex-col gap-8">
+        <section className="max-w-[1400px] mx-auto px-6 py-12 flex flex-col gap-12">
             {/* Massive Heading */}
             <div className="flex flex-col">
                 <h1 className='font-bold text-[220px] text-center'>DO IT <span className='text-[#4a69e2]'>RIGHT</span></h1>
@@ -54,13 +83,36 @@ const Hero = () => {
                 </div>
             </div>
 
-            <div>
+            {/* New Drops Section */}
+            <div className="flex flex-col gap-8">
                 <div className="flex items-end justify-between">
-                    <h1 className="text-[74px] font-semibold uppercase leading-none tracking-tight">Don’t miss out <br /> new drops</h1>
-                    <button className="bg-[#437EF7] hover:bg-[#3b6ed3] transition-colors text-white px-8 py-4 rounded-xl font-semibold uppercase w-fit text-sm mt-4">Shop New Drops</button>
+                    <h2 className="text-[74px] font-semibold uppercase leading-none tracking-tight text-[#232321]">
+                        Don’t miss out <br /> new drops
+                    </h2>
+                    <button className="bg-[#437EF7] hover:bg-[#3b6ed3] transition-colors text-white px-8 py-4 rounded-xl font-semibold uppercase w-fit text-sm">
+                        Shop New Drops
+                    </button>
                 </div>
 
-
+                {loading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded-[32px]" />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {products.map((product) => (
+                            <ProductCard
+                                key={product.id}
+                                id={product.id}
+                                title={product.title}
+                                price={product.price}
+                                image={product.images[0]?.replace(/[\[\]"]/g, '') || ''}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     )
