@@ -47,7 +47,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
 }
 
 const Categories = () => {
-    const [items, setItems] = useState<any[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
@@ -79,19 +79,18 @@ const Categories = () => {
     }, [emblaApi])
 
     useEffect(() => {
-        const fetchItems = async () => {
+        const fetchCategories = async () => {
             try {
-                // Fetch products from the Shoes category (categoryId=4) like in Hero.tsx
-                const response = await api.get('/products?categoryId=4&offset=0&limit=10');
-                setItems(response.data);
+                const response = await api.get('/categories');
+                setCategories(response.data);
             } catch (error) {
-                console.error('Error fetching items:', error);
+                console.error('Error fetching categories:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchItems();
+        fetchCategories();
     }, []);
 
     return (
@@ -111,7 +110,7 @@ const Categories = () => {
                                 ? "bg-[#FAFAFA] text-[#232321] opacity-100"
                                 : "bg-[#FAFAFA] text-[#232321] opacity-50"
                                 }`}
-                            aria-label="Previous items"
+                            aria-label="Previous categories"
                         >
                             <ChevronLeft size={24} />
                         </button>
@@ -122,7 +121,7 @@ const Categories = () => {
                                 ? "bg-[#FAFAFA] text-[#232321] opacity-100"
                                 : "bg-[#FAFAFA] text-[#232321] opacity-50"
                                 }`}
-                            aria-label="Next items"
+                            aria-label="Next categories"
                         >
                             <ChevronRight size={24} />
                         </button>
@@ -140,15 +139,8 @@ const Categories = () => {
                                     </div>
                                 </div>
                             ) : (
-                                items.map((item) => (
-                                    <CategoryCard
-                                        key={item.id}
-                                        category={{
-                                            id: item.id,
-                                            name: item.title,
-                                            image: item.images[0]
-                                        }}
-                                    />
+                                categories.map((category) => (
+                                    <CategoryCard key={category.id} category={category} />
                                 ))
                             )}
                         </div>
