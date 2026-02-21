@@ -77,43 +77,39 @@ export default function CartPage() {
                         {/* Cart Items List */}
                         <div className="flex flex-col gap-8 mt-4">
                             {cartItems.map(item => (
-                                <div key={item.cartId} className="flex gap-4 lg:gap-6 pb-8 border-b border-[#232321]/10 last:border-0 last:pb-0">
+                                <div key={item.cartId} className="flex gap-4 lg:gap-6 pb-8 lg:pb-8 border-b border-[#232321]/10 last:border-0 last:pb-0">
                                     {/* Item Image */}
-                                    <div className="relative w-[120px] h-[120px] lg:w-[160px] lg:h-[160px] bg-[#F0F0EE] rounded-2xl overflow-hidden shrink-0 hidden sm:block">
+                                    <div className="relative w-[150px] aspect-[4/5] lg:w-[160px] lg:h-[160px] lg:aspect-square bg-[#F0F0EE] border border-[#E7E7E3] rounded-[24px] lg:rounded-[32px] overflow-hidden shrink-0 flex items-center justify-center p-2">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
-                                    </div>
-                                    <div className="relative w-[100px] h-[100px] bg-[#F0F0EE] rounded-2xl overflow-hidden shrink-0 sm:hidden">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                        <img src={item.image} alt={item.title} className="w-full h-full object-contain mix-blend-multiply" />
                                     </div>
 
                                     {/* Item Details */}
-                                    <div className="flex flex-col flex-grow justify-between py-1">
+                                    <div className="flex flex-col flex-grow py-1">
                                         <div className="flex justify-between items-start gap-4">
-                                            <div className="flex flex-col gap-1">
-                                                <h3 className="font-bold text-[#232321] uppercase text-sm lg:text-base font-rubik pr-4">
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <h3 className="font-bold text-[#232321] uppercase text-[15px] lg:text-base font-rubik leading-tight mb-1">
                                                     {item.title}
                                                 </h3>
-                                                <p className="text-sm text-[#232321]/70 font-medium">Men's Road Running Shoes</p>
-                                                <p className="text-sm text-[#232321]/70 font-medium">Enamel Blue/ University White</p>
+                                                <p className="text-[13px] lg:text-sm text-[#232321]/70 font-medium">Men's Road Running Shoes</p>
+                                                <p className="text-[13px] lg:text-sm text-[#232321]/70 font-medium">{item.colorName || "Color"}</p>
 
                                                 {/* Selectors */}
-                                                <div className="flex gap-4 mt-3">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-semibold text-[#232321]">Size</span>
+                                                <div className="flex gap-4 mt-1 lg:mt-2">
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-[13px] lg:text-sm font-medium text-[#232321]/70">Size</span>
                                                         <select
-                                                            className="text-sm font-medium bg-transparent outline-none cursor-pointer"
+                                                            className="text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none"
                                                             value={item.size}
                                                             disabled
                                                         >
                                                             <option>{item.size}</option>
                                                         </select>
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-semibold text-[#232321]">Quantity</span>
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-[13px] lg:text-sm font-medium text-[#232321]/70">Quantity</span>
                                                         <select
-                                                            className="text-sm font-medium bg-transparent outline-none cursor-pointer"
+                                                            className="text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none"
                                                             value={item.quantity}
                                                             onChange={(e) => handleQuantityChange(item.cartId, Number(e.target.value))}
                                                         >
@@ -123,23 +119,28 @@ export default function CartPage() {
                                                         </select>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <span className="font-bold text-[#4A69E2] text-sm lg:text-base whitespace-nowrap font-rubik">
-                                                ${item.price.toFixed(2)}
-                                            </span>
-                                        </div>
 
-                                        {/* Item Actions */}
-                                        <div className="flex items-center gap-4 mt-4 lg:mt-0">
-                                            <button className="text-[#232321]/70 hover:text-[#232321] transition-colors">
-                                                <Heart size={20} strokeWidth={2.5} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleRemove(item.cartId)}
-                                                className="text-[#232321]/70 hover:text-red-500 transition-colors"
-                                            >
-                                                <Trash2 size={20} strokeWidth={2.5} />
-                                            </button>
+                                                {/* Price */}
+                                                <span className="font-bold text-[#4A69E2] text-base lg:text-lg whitespace-nowrap font-rubik mt-1 lg:mt-3">
+                                                    ${item.price.toFixed(2)}
+                                                </span>
+
+                                                {/* Item Actions */}
+                                                <div className="flex items-center gap-4 mt-2 lg:mt-3">
+                                                    <button className="text-[#232321] hover:text-[#4A69E2] transition-colors">
+                                                        <Heart size={20} strokeWidth={1.5} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRemove(item.cartId)}
+                                                        className="text-[#232321] hover:text-red-500 transition-colors"
+                                                    >
+                                                        <Trash2 size={20} strokeWidth={1.5} />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Optional Desktop Price Top-Right */}
+                                            {/* If we want to mirror the exact same layout desktop to mobile, skip putting it here. But usually on desktop price is here. I'll omit it so it matches mobile mockup natively everywhere. */}
                                         </div>
                                     </div>
                                 </div>
@@ -149,37 +150,37 @@ export default function CartPage() {
 
                     {/* Right: Order Summary */}
                     <div className="w-full lg:w-[35%]">
-                        <div className="bg-transparent flex flex-col gap-6 sticky top-24">
-                            <h2 className="text-2xl lg:text-[32px] font-bold text-[#232321] font-rubik">
+                        <div className="bg-white lg:bg-transparent rounded-[24px] lg:rounded-none p-6 lg:p-0 flex flex-col gap-5 lg:gap-6 sticky top-24">
+                            <h2 className="text-2xl lg:text-[32px] font-bold text-[#232321] font-rubik mb-2">
                                 Order Summary
                             </h2>
 
-                            <div className="flex flex-col gap-4 font-medium text-base text-[#232321]">
+                            <div className="flex flex-col gap-4 font-medium text-[15px] lg:text-base text-[#232321]">
                                 <div className="flex justify-between items-center">
-                                    <span className="uppercase text-[#232321]/80">{cartItems.length} ITEM{cartItems.length !== 1 && 'S'}</span>
+                                    <span className="text-[#232321]/90 uppercase">{cartItems.length} ITEM</span>
                                     <span>${itemsTotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[#232321]/80">Delivery</span>
+                                    <span className="text-[#232321]/90">Delivery</span>
                                     <span>${delivery.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                    <span className="text-[#232321]/80">Sales Tax</span>
-                                    <span className="text-[#232321]/50">-</span>
+                                    <span className="text-[#232321]/90">Sales Tax</span>
+                                    <span className="text-[#232321]/80">-</span>
                                 </div>
 
-                                <div className="flex justify-between items-center text-xl font-bold mt-2 pt-4 font-rubik uppercase">
+                                <div className="flex justify-between items-center text-xl font-bold mt-1 font-rubik text-[#232321]">
                                     <span>Total</span>
                                     <span>${finalTotal.toFixed(2)}</span>
                                 </div>
                             </div>
 
-                            <button className="w-full bg-[#232321] hover:bg-black text-white h-14 rounded-xl font-bold uppercase tracking-wide font-rubik transition-all mt-4">
-                                Checkout
+                            <button className="w-full bg-[#232321] hover:bg-black text-white h-[54px] lg:h-14 rounded-lg lg:rounded-xl font-bold text-sm lg:text-base uppercase tracking-wider font-rubik transition-all mt-4">
+                                CHECKOUT
                             </button>
 
-                            <button className="w-full text-left text-[#232321] font-bold underline text-sm mt-2 transition-opacity hover:opacity-70">
-                                Use a promo code
+                            <button className="w-full text-left text-[#232321] font-medium text-sm mt-1 transition-opacity hover:opacity-70">
+                                User a promo code
                             </button>
                         </div>
                     </div>
