@@ -24,14 +24,14 @@ const CategoryCard = ({ category }: { category: Category }) => {
     return (
         <div className="
             relative overflow-hidden group cursor-pointer bg-[#ECEEF0] transition-all duration-500
-            /* Mobile: full-width stacked blocks */
+            /* Mobile: sizing is handled by the slide container */
             w-full h-[300px] border-b border-[#232321]/5 last:border-b-0 flex-shrink-0
-            /* Desktop: horizontal carousel slide */
+            /* Desktop: horizontal carousel slide sizing */
             md:flex-[0_0_50%] md:min-w-0 md:h-[600px] md:border-b-0 md:border-r md:last:border-r-0
         ">
-            {/* Image Container - Pushed higher to give space to the title */}
-            <div className="absolute inset-0 p-8 md:p-12 pb-20 md:pb-28 flex items-center justify-center pointer-events-none">
-                <div className="relative w-full h-full transition-transform duration-700 group-hover:scale-110">
+            {/* Image Container - Sneaker centered and contained */}
+            <div className="absolute inset-0 p-8 md:p-16 flex items-center justify-center pointer-events-none">
+                <div className="relative w-8/12 h-8/12 md:w-full md:h-full transition-transform duration-700 group-hover:scale-110">
                     <Image
                         src={category.image}
                         alt={category.name}
@@ -42,7 +42,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
                 </div>
             </div>
 
-            {/* Bottom Content Area - Positioned precisely as per Figma */}
+            {/* Bottom Content Area */}
             <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 flex items-end justify-between z-10 w-full">
                 <h3 className="text-2xl md:text-[32px] font-bold text-[#232321] leading-[1.1] font-rubik tracking-tight max-w-[150px] md:max-w-[200px]">
                     {formattedName}
@@ -50,10 +50,10 @@ const CategoryCard = ({ category }: { category: Category }) => {
 
                 <Link
                     href={`/category/${category.id}`}
-                    className="bg-[#232321] text-white w-9 h-9 md:w-11 md:h-11 rounded-lg flex items-center justify-center transition-all hover:bg-[#4a69e2] hover:scale-110 shadow-xl"
+                    className="bg-[#232321] text-white w-9 h-9 md:w-12 md:h-12 rounded-lg flex items-center justify-center transition-all hover:bg-[#4a69e2] hover:scale-110 shadow-xl"
                     onClick={(e) => e.stopPropagation()}
                 >
-                    <ArrowUpRight className="w-4 h-4 md:w-5 md:h-5" />
+                    <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" />
                 </Link>
             </div>
         </div>
@@ -63,65 +63,40 @@ const CategoryCard = ({ category }: { category: Category }) => {
 const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
-    const [mobileIndex, setMobileIndex] = useState(0);
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
-    const [isMobile, setIsMobile] = useState(false)
 
-    // Embla for Desktop
-    const [emblaRef, emblaApi] = useEmblaCarousel({
-        align: 'start',
-        loop: false,
-        dragFree: true,
-        watchDrag: () => window.innerWidth >= 768
-    })
-
-    // Determine if we are on mobile reactively
-    useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768)
-        checkMobile()
-        window.addEventListener('resize', checkMobile)
-        return () => window.removeEventListener('resize', checkMobile)
-    }, [])
+    // Separate Embla instances for Mobile (Page of 2) and Desktop (Page of 1 per 50% slide)
+    const [emblaRefMobile, emblaApiMobile] = useEmblaCarousel({ align: 'start', loop: false })
+    const [emblaRefDesktop, emblaApiDesktop] = useEmblaCarousel({ align: 'start', loop: false, dragFree: true })
 
     const updateNavStates = useCallback(() => {
-        if (isMobile) {
-            setCanScrollPrev(mobileIndex > 0);
-            setCanScrollNext(mobileIndex < categories.length - 2);
-        } else if (emblaApi) {
-            setCanScrollPrev(emblaApi.canScrollPrev());
-            setCanScrollNext(emblaApi.canScrollNext());
+        const activeApi = window.innerWidth < 768 ? emblaApiMobile : emblaApiDesktop
+        if (activeApi) {
+            setCanScrollPrev(activeApi.canScrollPrev())
+            setCanScrollNext(activeApi.canScrollNext())
         }
-    }, [isMobile, mobileIndex, categories.length, emblaApi])
+    }, [emblaApiMobile, emblaApiDesktop])
 
     useEffect(() => {
-        if (!emblaApi) return
-        emblaApi.on('select', updateNavStates)
-        emblaApi.on('reInit', updateNavStates)
+        const apis = [emblaApiMobile, emblaApiDesktop]
+        apis.forEach(api => {
+            if (!api) return
+            api.on('select', updateNavStates)
+            api.on('reInit', updateNavStates)
+        })
         updateNavStates()
-    }, [emblaApi, updateNavStates])
-
-    // Also update when mobileIndex or categories change
-    useEffect(() => {
-        updateNavStates()
-    }, [mobileIndex, categories.length, isMobile, updateNavStates])
+    }, [emblaApiMobile, emblaApiDesktop, updateNavStates])
 
     const handlePrev = useCallback(() => {
-        if (isMobile) {
-            setMobileIndex(prev => Math.max(0, prev - 2));
-        } else {
-            emblaApi?.scrollPrev();
-        }
-    }, [emblaApi, isMobile]);
+        const activeApi = window.innerWidth < 768 ? emblaApiMobile : emblaApiDesktop
+        activeApi?.scrollPrev()
+    }, [emblaApiMobile, emblaApiDesktop]);
 
     const handleNext = useCallback(() => {
-        if (isMobile) {
-            const maxIdx = Math.max(0, categories.length - 2);
-            setMobileIndex(prev => Math.min(prev + 2, maxIdx));
-        } else {
-            emblaApi?.scrollNext();
-        }
-    }, [emblaApi, isMobile, categories.length]);
+        const activeApi = window.innerWidth < 768 ? emblaApiMobile : emblaApiDesktop
+        activeApi?.scrollNext()
+    }, [emblaApiMobile, emblaApiDesktop]);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -136,6 +111,11 @@ const Categories = () => {
         };
         fetchCategories();
     }, []);
+
+    // Helper to chunk categories into pairs for mobile slides
+    const categoryPairs = Array.from({ length: Math.ceil(categories.length / 2) }, (_, i) =>
+        categories.slice(i * 2, i * 2 + 2)
+    );
 
     return (
         <section className="bg-[#232321] pt-12 md:pt-24 pb-12 md:pb-24 mt-12 md:mt-20 overflow-hidden">
@@ -173,29 +153,30 @@ const Categories = () => {
             <div className="px-6 md:px-0 md:pl-10 lg:pl-[calc((100vw-1400px)/2+40px)]">
                 <div className="rounded-tl-[32px] md:rounded-tl-[64px] rounded-tr-none rounded-bl-none rounded-br-none overflow-hidden bg-[#ECEEF0] shadow-2xl">
 
-                    {/* MOBILE: Vertical Sliding Window (2 items visible) */}
-                    <div className="md:hidden overflow-hidden h-[600px]">
-                        <div
-                            className="flex flex-col transition-transform duration-500 ease-in-out"
-                            style={{ transform: `translateY(-${mobileIndex * 300}px)` }}
-                        >
+                    {/* MOBILE: Horizontal Carousel of Vertical Pairs */}
+                    <div className="md:hidden overflow-hidden h-[600px] embla" ref={emblaRefMobile}>
+                        <div className="flex touch-pan-y">
                             {loading ? (
-                                <div className="w-full h-[600px] flex items-center justify-center">
+                                <div className="w-full h-full flex items-center justify-center">
                                     <div className="animate-pulse text-[#232321] font-bold">Loading...</div>
                                 </div>
                             ) : (
-                                categories.map((category) => (
-                                    <CategoryCard key={category.id} category={category} />
+                                categoryPairs.map((pair, pIdx) => (
+                                    <div key={pIdx} className="flex-[0_0_100%] min-w-0 flex flex-col h-[600px]">
+                                        {pair.map((category) => (
+                                            <CategoryCard key={category.id} category={category} />
+                                        ))}
+                                    </div>
                                 ))
                             )}
                         </div>
                     </div>
 
-                    {/* DESKTOP: Horizontal Embla Carousel */}
-                    <div className="hidden md:block overflow-hidden h-[600px]" ref={emblaRef}>
+                    {/* DESKTOP: Standard Horizontal Embla Carousel */}
+                    <div className="hidden md:block overflow-hidden h-[600px] embla" ref={emblaRefDesktop}>
                         <div className="flex">
                             {loading ? (
-                                <div className="w-full h-[600px] flex items-center justify-center">
+                                <div className="w-full h-full flex items-center justify-center">
                                     <div className="animate-pulse text-[#232321] font-bold">Loading...</div>
                                 </div>
                             ) : (
