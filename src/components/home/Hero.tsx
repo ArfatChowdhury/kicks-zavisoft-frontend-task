@@ -32,7 +32,7 @@ const Hero = () => {
     }, []);
 
     return (
-        <section className="max-w-[1400px] mx-auto px-6 py-12 flex flex-col gap-12">
+        <section className="max-w-[1400px] mx-auto px-6 py-8 flex flex-col gap-12">
             {/* Massive Heading */}
             <div className="flex flex-col">
                 <h1 className='font-bold text-[220px] text-center'>DO IT <span className='text-[#4a69e2]'>RIGHT</span></h1>

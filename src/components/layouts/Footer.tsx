@@ -43,7 +43,7 @@ const Footer = () => {
                 </div>
 
                 {/* 2. Links Section (Dark) - Nested inside Blue with rounded top */}
-                <div className="bg-[#232321] rounded-t-[48px] p-10 md:p-16 flex flex-col gap-20 relative overflow-hidden">
+                <div className="bg-[#232321] rounded-t-[48px] pt-10 md:pt-16 px-10 md:px-16 pb-0 flex flex-col gap-10 md:gap-20 relative overflow-hidden">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 z-10">
                         {/* About Us */}
                         <div className="flex flex-col gap-6">
@@ -104,12 +104,12 @@ const Footer = () => {
                     </div>
 
                     {/* Massive Branding at Bottom */}
-                    <div className="relative w-full h-[60px] sm:h-[100px] md:h-[120px] lg:h-[180px] mt-10">
+                    <div className="relative w-full h-[80px] sm:h-[120px] md:h-[160px] lg:h-[224px] mt-4 flex items-end">
                         <Image
                             src="/footer/kicks2bottom.png"
                             alt="KICKS Branding"
                             fill
-                            className="object-contain"
+                            className="object-contain object-bottom"
                         />
                     </div>
                 </div>

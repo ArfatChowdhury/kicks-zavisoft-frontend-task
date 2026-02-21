@@ -94,9 +94,9 @@ const Categories = () => {
     }, []);
 
     return (
-        <section className="bg-[#232321] pt-24 pb-12 mt-20">
+        <section className="bg-[#232321] pt-24 pb-12 mt-20 overflow-hidden">
+            {/* Header Section - Kept centered */}
             <div className="max-w-[1400px] mx-auto px-10">
-                {/* Header Section */}
                 <div className="flex items-center justify-between mb-16 px-4">
                     <h2 className="text-[74px] font-semibold uppercase text-white leading-none tracking-tight font-rubik">
                         Categories
@@ -127,8 +127,10 @@ const Categories = () => {
                         </button>
                     </div>
                 </div>
+            </div>
 
-                {/* Main Cards Wrapper (Embla Container) */}
+            {/* Main Cards Wrapper (Embla Container) - Bleeds to the right */}
+            <div className="pl-[40px] lg:pl-[calc((100vw-1400px)/2+40px)]">
                 <div className="rounded-tl-[64px] overflow-hidden bg-[#ECEEF0] shadow-2xl">
                     <div className="overflow-hidden" ref={emblaRef}>
                         <div className="flex">
