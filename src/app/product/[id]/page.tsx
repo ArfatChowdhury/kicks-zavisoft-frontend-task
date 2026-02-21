@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, useRef } from 'react';
-import { Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import { Heart } from 'lucide-react';
 import api from '@/lib/api';
 import ProductCard from '@/components/common/ProductCard';
 import { useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/features/cartSlice';
+import useEmblaCarousel from 'embla-carousel-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 // ── Pixel-perfect Magnifier ──────────────────────────────────────
 const LENS_SIZE = 180;
@@ -24,13 +26,13 @@ function MagnifierImage({ src, alt }: { src: string; alt: string }) {
     return (
         <div
             ref={ref}
-            className="relative w-full h-full overflow-hidden cursor-crosshair"
+            className="absolute inset-0 overflow-hidden cursor-crosshair"
             onMouseMove={onMove}
             onMouseLeave={() => setPos(null)}
         >
             {/* Base image */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt={alt} className="w-full h-full object-contain select-none" draggable={false} />
+            <img src={src} alt={alt} className="block w-full h-full object-cover select-none" draggable={false} />
 
             {/*
              * Zoom layer: an identical copy of the image, scaled from the cursor point.
@@ -50,7 +52,7 @@ function MagnifierImage({ src, alt }: { src: string; alt: string }) {
                         alt=""
                         aria-hidden
                         draggable={false}
-                        className="w-full h-full object-contain select-none"
+                        className="block w-full h-full object-cover select-none"
                         style={{
                             transform: `scale(${ZOOM})`,
                             transformOrigin: `${pos.x}px ${pos.y}px`,
@@ -107,12 +109,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 setLoading(true);
                 const [productRes, relatedRes] = await Promise.all([
                     api.get(`/products/${id}`),
-                    api.get('/products?offset=0&limit=8')
+                    api.get('/products?categoryId=4&offset=0&limit=8') // Match Hero.tsx new drops
                 ]);
                 setProduct(productRes.data);
                 const others = (relatedRes.data as Product[]).filter(
                     (p: Product) => p.id !== Number(id)
-                ).slice(0, 4);
+                );
                 setRelated(others);
             } catch (error) {
                 console.error('Failed to fetch product:', error);
@@ -174,10 +176,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {/* ===== Main Product Section ===== */}
                 <div className="flex gap-10">
 
-                    {/* Left: 4-Image Gallery with pixel-perfect magnifier */}
-                    <div className="w-[65%] grid grid-cols-2 gap-3 rounded-[32px] overflow-hidden">
+                    {/* Left: 4-Image Gallery — uniform 1px gap, 4/5 aspect ratio */}
+                    <div className="w-[65%] grid grid-cols-2 gap-4 rounded-[32px] overflow-hidden bg-[#E8E8E5]">
                         {gallery.map((img, idx) => (
-                            <div key={idx} className="relative aspect-square bg-[#F0F0EE]">
+                            <div key={idx} className="relative aspect-[4/5] bg-[#F0F0EE]">
                                 <MagnifierImage src={img} alt={`${product.title} view ${idx + 1}`} />
                             </div>
                         ))}
@@ -281,36 +283,105 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
                 {/* ===== You May Also Like ===== */}
                 {related.length > 0 && (
-                    <div className="mt-32">
-                        <div className="flex justify-between items-end mb-12">
-                            <h2 className="text-[48px] font-bold text-[#232321] font-rubik uppercase tracking-tight">
-                                You may also like
-                            </h2>
-                            <div className="flex gap-3">
-                                <button className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow hover:bg-[#232321] hover:text-white transition-all">
-                                    <ChevronLeft size={22} />
-                                </button>
-                                <button className="w-12 h-12 bg-[#232321] text-white rounded-xl flex items-center justify-center shadow hover:bg-black transition-all">
-                                    <ChevronRight size={22} />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-4 gap-6">
-                            {related.map(prod => (
-                                <ProductCard
-                                    key={prod.id}
-                                    id={prod.id}
-                                    title={prod.title}
-                                    price={prod.price}
-                                    image={cleanImage(prod.images[0])}
-                                    isNew={true}
-                                />
-                            ))}
-                        </div>
-                    </div>
+                    <YouMayAlsoLike products={related} cleanImage={cleanImage} />
                 )}
             </div>
         </main>
+    );
+}
+
+// ── You May Also Like carousel (Hero-style header + Categories nav) ──
+function YouMayAlsoLike({
+    products,
+    cleanImage,
+}: {
+    products: Product[];
+    cleanImage: (img: string) => string;
+}) {
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false, align: 'start' });
+    const [canPrev, setCanPrev] = useState(false);
+    const [canNext, setCanNext] = useState(true);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
+
+    const onSelect = useCallback(() => {
+        if (!emblaApi) return;
+        setCanPrev(emblaApi.canScrollPrev());
+        setCanNext(emblaApi.canScrollNext());
+        setSelectedIndex(emblaApi.selectedScrollSnap());
+    }, [emblaApi]);
+
+    useEffect(() => {
+        if (!emblaApi) return;
+        setScrollSnaps(emblaApi.scrollSnapList());
+        emblaApi.on('select', onSelect);
+        emblaApi.on('reInit', onSelect);
+        onSelect();
+    }, [emblaApi, onSelect]);
+
+    return (
+        <div className="mt-24 flex flex-col gap-8">
+            {/* Hero-style header */}
+            <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
+                <h2 className="text-[36px] md:text-[74px] font-semibold uppercase leading-tight md:leading-none tracking-tight text-[#232321] font-rubik">
+                    You may{' '}<br className="hidden md:block" />also like
+                </h2>
+                <div className="flex items-center gap-4">
+                    {/* Categories-style prev/next */}
+                    <button
+                        onClick={() => emblaApi?.scrollPrev()}
+                        disabled={!canPrev}
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all font-rubik ${canPrev
+                            ? 'border-[#232321] text-[#232321] hover:bg-[#232321] hover:text-white'
+                            : 'border-[#232321]/20 text-[#232321]/30 cursor-not-allowed'
+                            }`}
+                    >
+                        <ChevronLeft size={22} />
+                    </button>
+                    <button
+                        onClick={() => emblaApi?.scrollNext()}
+                        disabled={!canNext}
+                        className={`w-12 h-12 rounded-xl flex items-center justify-center border-2 transition-all font-rubik ${canNext
+                            ? 'bg-[#232321] border-[#232321] text-white hover:bg-black'
+                            : 'bg-[#232321]/20 border-transparent text-white/50 cursor-not-allowed'
+                            }`}
+                    >
+                        <ChevronRight size={22} />
+                    </button>
+                </div>
+            </div>
+
+            {/* Embla carousel */}
+            <div className="overflow-hidden" ref={emblaRef}>
+                <div className="flex gap-4">
+                    {products.map(prod => (
+                        <div key={prod.id} className="flex-[0_0_calc(25%-0.75rem)] min-w-0">
+                            <ProductCard
+                                id={prod.id}
+                                title={prod.title}
+                                price={prod.price}
+                                image={cleanImage(prod.images[0])}
+                                isNew={true}
+                            />
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="flex justify-center gap-2 mt-4">
+                {scrollSnaps.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => emblaApi?.scrollTo(index)}
+                        className={`h-2 rounded-full transition-all duration-300 ${index === selectedIndex
+                            ? 'w-8 bg-[#4A69E2]'
+                            : 'w-8 bg-[#232321]/20 hover:bg-[#232321]/40'
+                            }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
+        </div>
     );
 }
