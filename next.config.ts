@@ -5,19 +5,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.imgur.com',
+        hostname: '**',
       },
       {
-        protocol: 'https',
-        hostname: 'api.lorem.space',
-      },
-      {
-        protocol: 'https',
-        hostname: 'placeimg.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'pravatar.cc',
+        protocol: 'http',
+        hostname: '**',
       },
     ],
   },
