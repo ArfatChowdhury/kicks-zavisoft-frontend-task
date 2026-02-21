@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react'
 import Image from 'next/image'
@@ -12,18 +12,18 @@ const ReviewCard = ({ title, description, userImage, productImage, rating }: {
     rating: number
 }) => {
     return (
-        <div className="flex-1 min-w-[300px] flex flex-col gap-0 rounded-[32px] overflow-hidden shadow-sm">
+        <div className="flex-1 min-w-[280px] md:min-w-[400px] flex flex-col gap-0 rounded-[24px] md:rounded-[32px] overflow-hidden shadow-sm transition-all duration-300">
             {/* Top White Content Area */}
-            <div className="bg-white p-8 rounded-t-[32px] relative flex flex-col gap-4">
-                <div className="flex justify-between items-start">
+            <div className="bg-white p-6 md:p-8 rounded-t-[24px] md:rounded-t-[32px] relative flex flex-col gap-4">
+                <div className="flex justify-between items-start gap-4">
                     <div className="flex flex-col gap-1">
-                        <h3 className="text-2xl font-bold text-[#232321]">{title}</h3>
-                        <p className="text-[#232321]/80 text-[16px] leading-relaxed max-w-[240px]">
+                        <h3 className="text-xl md:text-2xl font-bold text-[#232321] font-rubik leading-tight">{title}</h3>
+                        <p className="text-[#232321]/80 text-[14px] md:text-[16px] leading-relaxed max-w-[240px]">
                             {description}
                         </p>
                     </div>
                     {/* User Avatar */}
-                    <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-white shadow-lg shrink-0">
+                    <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 border-white shadow-lg shrink-0">
                         <Image src={userImage} alt="User" fill className="object-cover" />
                     </div>
                 </div>
@@ -34,17 +34,17 @@ const ReviewCard = ({ title, description, userImage, productImage, rating }: {
                         {[...Array(5)].map((_, i) => (
                             <Star
                                 key={i}
-                                size={20}
+                                size={18}
                                 className={`${i < Math.floor(rating) ? 'fill-[#FFA52F] text-[#FFA52F]' : 'text-[#E7E7E3]'}`}
                             />
                         ))}
                     </div>
-                    <span className="font-bold text-[#232321]">{rating.toFixed(1)}</span>
+                    <span className="font-bold text-[#232321] text-sm md:text-base">{rating.toFixed(1)}</span>
                 </div>
             </div>
 
             {/* Bottom Product Image Area */}
-            <div className="relative w-full h-[400px] rounded-b-[24px] overflow-hidden">
+            <div className="relative w-full h-[300px] md:h-[400px] overflow-hidden">
                 <Image
                     src={productImage}
                     alt="Sneaker Review"
@@ -82,19 +82,19 @@ const Reviews = () => {
     ];
 
     return (
-        <section className="bg-transparent py-24 px-10 max-w-[1400px] mx-auto">
+        <section className="bg-transparent py-12 md:py-24 px-6 md:px-10 max-w-[1400px] mx-auto transition-all duration-300">
             {/* Header */}
-            <div className="flex justify-between items-center mb-16">
-                <h2 className="text-[74px] font-bold uppercase text-[#232321] tracking-tight font-rubik">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-16 gap-6">
+                <h2 className="text-[36px] md:text-[74px] font-bold uppercase text-[#232321] tracking-tight font-rubik leading-none">
                     Reviews
                 </h2>
-                <button className="bg-[#4a69e2] hover:bg-[#3b6ed3] text-white px-8 py-4 rounded-xl font-medium uppercase text-sm transition-all hover:scale-105 active:scale-95 shadow-lg">
+                <button className="bg-[#4A69E2] hover:bg-[#3b6ed3] text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium uppercase text-xs md:text-sm transition-all hover:scale-105 active:scale-95 shadow-lg w-fit">
                     See All
                 </button>
             </div>
 
-            {/* Grid */}
-            <div className="flex gap-6 overflow-x-auto pb-8 no-scrollbar">
+            {/* Grid / Carousel */}
+            <div className="flex gap-4 md:gap-6 overflow-x-auto pb-8 no-scrollbar scroll-smooth">
                 {reviews.map((review, index) => (
                     <ReviewCard key={index} {...review} />
                 ))}

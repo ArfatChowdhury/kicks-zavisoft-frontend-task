@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/layouts/Header";
 import Footer from "@/components/layouts/Footer";
 import ReduxProvider from "@/components/providers/ReduxProvider";
+import CartSidebar from "@/components/common/CartSidebar";
 
 const rubik = Rubik({
   variable: "--font-rubik",
@@ -14,6 +15,9 @@ const rubik = Rubik({
 export const metadata: Metadata = {
   title: "KICKS - Premium Sneakers",
   description: "Discover the latest and greatest in high-end footwear.",
+  icons: {
+    icon: "/footer/kicksFronts.png",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +32,7 @@ export default function RootLayout({
       >
         <ReduxProvider>
           <Header />
+          {/* <CartSidebar /> */}
           <main className="min-h-screen">
             {children}
           </main>
