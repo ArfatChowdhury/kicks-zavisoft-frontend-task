@@ -63,12 +63,12 @@ const Header = () => {
                     </button>
 
                     {/* Cart Badge always visible */}
-                    <button
-                        onClick={() => dispatch(toggleCart())}
-                        className="relative hover:opacity-90 transition-opacity cursor-pointer bg-[#F5A623] rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-bold text-xs md:text-sm"
+                    <Link
+                        href="/cart"
+                        className="relative hover:opacity-90 transition-opacity cursor-pointer bg-[#F5A623] rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-bold text-xs md:text-sm text-[#232321]"
                     >
                         {itemCount}
-                    </button>
+                    </Link>
                 </div>
             </div>
         </header>

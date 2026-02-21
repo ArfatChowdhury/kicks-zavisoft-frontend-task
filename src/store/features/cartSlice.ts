@@ -1,12 +1,15 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export interface CartItem {
+    cartId: string; // Unique ID based on id + size + color
     id: number;
     title: string;
     price: number;
     image: string;
     quantity: number;
-    size?: string;
+    size: number;
+    color: string;
+    colorName: string;
 }
 
 interface CartState {
@@ -26,19 +29,22 @@ const cartSlice = createSlice({
         toggleCart: (state) => {
             state.isOpen = !state.isOpen;
         },
-        addItem: (state, action: PayloadAction<Omit<CartItem, 'quantity'>>) => {
-            const existingItem = state.items.find((item) => item.id === action.payload.id);
+        addItem: (state, action: PayloadAction<Omit<CartItem, 'quantity' | 'cartId'>>) => {
+            const { id, size, color } = action.payload;
+            const newCartId = `${id}-${size}-${color}`;
+
+            const existingItem = state.items.find((item) => item.cartId === newCartId);
             if (existingItem) {
                 existingItem.quantity += 1;
             } else {
-                state.items.push({ ...action.payload, quantity: 1 });
+                state.items.push({ ...action.payload, cartId: newCartId, quantity: 1 });
             }
         },
-        removeItem: (state, action: PayloadAction<number>) => {
-            state.items = state.items.filter((item) => item.id !== action.payload);
+        removeItem: (state, action: PayloadAction<string>) => {
+            state.items = state.items.filter((item) => item.cartId !== action.payload);
         },
-        updateQuantity: (state, action: PayloadAction<{ id: number; quantity: number }>) => {
-            const item = state.items.find((i) => i.id === action.payload.id);
+        updateQuantity: (state, action: PayloadAction<{ cartId: string; quantity: number }>) => {
+            const item = state.items.find((i) => i.cartId === action.payload.cartId);
             if (item) {
                 item.quantity = action.payload.quantity;
             }

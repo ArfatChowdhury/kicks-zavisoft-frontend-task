@@ -112,11 +112,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
     const handleAddToCart = () => {
         if (!product) return;
+        const colorName = COLORS.find(c => c.id === selectedColor)?.name || selectedColor;
         dispatch(addItem({
             id: product.id,
             title: product.title,
             price: product.price,
             image: product.images[0],
+            size: selectedSize,
+            color: selectedColor,
+            colorName: colorName,
         }));
     };
 

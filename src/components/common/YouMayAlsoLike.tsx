@@ -70,8 +70,8 @@ export default function YouMayAlsoLike({
         <div className="mt-6 flex flex-col gap-8">
             {/* Hero-style header */}
             <div className="flex flex-row items-center md:items-end justify-between gap-4">
-                <h2 className="text-[20px] md:text-[74px] font-bold md:font-semibold md:uppercase leading-tight md:leading-none tracking-tight text-[#232321] font-rubik">
-                    You may <br className="hidden md:block" />also like
+                <h2 className="text-[20px] md:text-5xl font-semibold font-weight-600 md:font-semibold md:uppercase leading-tight md:leading-none tracking-tight text-[#232321] font-rubik">
+                    You may also like
                 </h2>
                 <div className="flex items-center gap-2 md:gap-4">
                     {/* Categories-style prev/next */}
