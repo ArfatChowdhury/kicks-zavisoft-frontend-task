@@ -5,7 +5,7 @@ import { Facebook, Instagram, Twitter, Music2 } from 'lucide-react'
 
 const Footer = () => {
     return (
-        <footer className="w-full bg-[#E7E7E3] pt-12 md:pt-20 px-4 md:px-10 pb-8 md:pb-10 transition-all duration-300">
+        <footer className="w-full bg-[#E7E7E3] pt-6 md:pt-20 px-4 md:px-10 pb-8 md:pb-10 transition-all duration-300">
             {/* Main Blue Container */}
             <div className="max-w-[1400px] mx-auto bg-[#4A69E2] rounded-[32px] md:rounded-[48px] overflow-hidden flex flex-col shadow-2xl">
 
