@@ -84,11 +84,11 @@ const Reviews = () => {
     return (
         <section className="bg-transparent py-12 md:py-24 px-6 md:px-10 max-w-[1400px] mx-auto transition-all duration-300">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-16 gap-6">
+            <div className="flex flex-row items-center justify-between mb-8 md:mb-16 gap-4">
                 <h2 className="text-[36px] md:text-[74px] font-bold uppercase text-[#232321] tracking-tight font-rubik leading-none">
                     Reviews
                 </h2>
-                <button className="bg-[#4A69E2] hover:bg-[#3b6ed3] text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium uppercase text-xs md:text-sm transition-all hover:scale-105 active:scale-95 shadow-lg w-fit">
+                <button className="bg-[#4A69E2] hover:bg-[#3b6ed3] text-white px-6 md:px-8 py-3 md:py-4 rounded-xl font-medium uppercase text-[10px] md:text-sm transition-all hover:scale-105 active:scale-95 shadow-lg shrink-0">
                     See All
                 </button>
             </div>

@@ -44,9 +44,9 @@ const Footer = () => {
 
                 {/* 2. Links Section (Dark) - Nested inside Blue with rounded top */}
                 <div className="bg-[#232321] rounded-t-[32px] md:rounded-t-[48px] pt-10 md:pt-16 px-8 md:px-16 pb-0 flex flex-col gap-10 md:gap-20 relative overflow-hidden">
-                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 z-10">
                         {/* About Us */}
-                        <div className="flex flex-col gap-4 md:gap-6 col-span-2 md:col-span-1">
+                        <div className="flex flex-col gap-4 md:gap-6">
                             <h4 className="text-[#FFA52F] text-xl md:text-2xl font-bold font-rubik">About us</h4>
                             <p className="text-white/70 text-sm md:text-lg leading-relaxed">
                                 We are the biggest hyperstore in the universe.
@@ -120,7 +120,7 @@ const Footer = () => {
                 © All rights reserved
             </div>
         </footer>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;

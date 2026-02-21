@@ -43,7 +43,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
             </div>
 
             {/* Bottom Content Area */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 flex items-end justify-between z-10 w-full">
+            <div className="absolute bottom-0 left-0 right-0 px-12 py-4 md:px-10 md:py-8 flex items-end justify-between z-10 w-full">
                 <h3 className="text-2xl md:text-[32px] font-bold text-[#232321] leading-[1.1] font-rubik tracking-tight max-w-[150px] md:max-w-[200px]">
                     {formattedName}
                 </h3>
@@ -102,7 +102,47 @@ const Categories = () => {
         const fetchCategories = async () => {
             try {
                 const response = await api.get('/categories');
-                setCategories(response.data);
+                let data: Category[] = response.data;
+
+                // 1. Fix spelling for "miscellaneos" -> "Miscellaneous"
+                data = data.map(cat => ({
+                    ...cat,
+                    name: cat.name.toLowerCase().includes('miscellane') ? 'Miscellaneous' : cat.name
+                }));
+
+                // 2. Define priority names (provided by user)
+                const priorityNames = ['electronics', 'shoes', 'furniture', 'miscellaneous'];
+
+                // 3. Sort logic:
+                // Priority #1: Has image AND is in priorityNames
+                // Priority #2: Has image but NOT in priorityNames
+                // Priority #3: NO image
+                data.sort((a, b) => {
+                    const aHasImage = !!a.image && a.image.length > 5;
+                    const bHasImage = !!b.image && b.image.length > 5;
+                    const aNameLower = a.name.toLowerCase();
+                    const bNameLower = b.name.toLowerCase();
+                    const aIsPriority = priorityNames.includes(aNameLower);
+                    const bIsPriority = priorityNames.includes(bNameLower);
+
+                    // Image presence is the first filter
+                    if (aHasImage && !bHasImage) return -1;
+                    if (!aHasImage && bHasImage) return 1;
+
+                    // If both have images, use priority names
+                    if (aHasImage && bHasImage) {
+                        if (aIsPriority && !bIsPriority) return -1;
+                        if (!aIsPriority && bIsPriority) return 1;
+
+                        // If both are priority or both are not, maintain relative order or alphabetical
+                        return aNameLower.localeCompare(bNameLower);
+                    }
+
+                    // If neither have images, just sort alphabetically
+                    return aNameLower.localeCompare(bNameLower);
+                });
+
+                setCategories(data);
             } catch (error) {
                 console.error('Error fetching categories:', error);
             } finally {
