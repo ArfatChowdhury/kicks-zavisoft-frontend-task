@@ -116,6 +116,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     }, [id]);
 
     const [isAdded, setIsAdded] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     const handleAddToCart = () => {
         if (!product) return;
@@ -188,7 +189,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         {/* Mobile Gallery (Hero + Dots + Thumbnails) */}
                         <div className="w-full flex lg:hidden flex-col gap-4">
                             {/* Main Image */}
-                            <div className="relative w-full aspect-[4/5] bg-[#F0F0EE] rounded-[32px] overflow-hidden">
+                            <div key={selectedImg} className="relative w-full aspect-[4/5] bg-[#F0F0EE] rounded-[32px] overflow-hidden animate-in fade-in duration-500">
                                 <MagnifierImage src={gallery[selectedImg]} alt={`${product.title} main view`} />
                             </div>
 
@@ -309,8 +310,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                                         'Add to Cart'
                                     )}
                                 </button>
-                                <button className="w-14 h-14 bg-[#232321] hover:bg-black text-white flex items-center justify-center rounded-xl transition-all">
-                                    <Heart size={22} />
+                                <button
+                                    onClick={() => setIsFavorite(!isFavorite)}
+                                    className={`w-14 h-14 bg-[#232321] hover:bg-black text-white flex items-center justify-center rounded-xl transition-all active:scale-90 ${isFavorite ? 'text-red-500' : ''}`}
+                                >
+                                    <Heart size={22} fill={isFavorite ? "currentColor" : "none"} className={isFavorite ? 'animate-heartbeat' : ''} />
                                 </button>
                             </div>
                             <button className="w-full bg-[#4A69E2] hover:bg-[#3b59c2] text-white h-14 rounded-xl font-bold uppercase tracking-wide font-rubik transition-all">

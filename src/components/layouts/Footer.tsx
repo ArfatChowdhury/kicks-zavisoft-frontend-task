@@ -99,16 +99,16 @@ const Footer = () => {
                             <div className="flex flex-col gap-4 md:gap-6">
                                 <h4 className="text-[#FFA52F] text-xl md:text-2xl font-bold font-rubik">Follow us</h4>
                                 <div className="flex gap-4">
-                                    <Link href="#" className="text-white hover:scale-110 transition-transform">
+                                    <Link href="#" className="text-white hover:text-[#FFA52F] transition-all duration-300 hover:scale-125 hover:-rotate-12 active:scale-95">
                                         <Facebook className="w-5 h-5 md:w-6 md:h-6" />
                                     </Link>
-                                    <Link href="#" className="text-white hover:scale-110 transition-transform">
+                                    <Link href="#" className="text-white hover:text-[#FFA52F] transition-all duration-300 hover:scale-125 hover:-rotate-12 active:scale-95">
                                         <Instagram className="w-5 h-5 md:w-6 md:h-6" />
                                     </Link>
-                                    <Link href="#" className="text-white hover:scale-110 transition-transform">
+                                    <Link href="#" className="text-white hover:text-[#FFA52F] transition-all duration-300 hover:scale-125 hover:-rotate-12 active:scale-95">
                                         <Twitter className="w-5 h-5 md:w-6 md:h-6" />
                                     </Link>
-                                    <Link href="#" className="text-white hover:scale-110 transition-transform">
+                                    <Link href="#" className="text-white hover:text-[#FFA52F] transition-all duration-300 hover:scale-125 hover:-rotate-12 active:scale-95">
                                         <Music2 className="w-5 h-5 md:w-6 md:h-6" />
                                     </Link>
                                 </div>

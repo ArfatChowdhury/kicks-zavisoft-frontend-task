@@ -32,9 +32,9 @@ const ProductCard = ({ id, image, title, price, isNew = true }: ProductCardProps
     };
 
     return (
-        <div className="flex flex-col gap-3 md:gap-4 w-full group transition-all duration-300">
+        <div className="flex flex-col gap-3 md:gap-4 w-full group hover-lift transition-all duration-300">
             {/* White Stroke / Border Container */}
-            <div className="relative w-full aspect-[318/350] bg-white rounded-[24px] md:rounded-[30px] p-[4px] md:p-[6px] shadow-sm border border-white overflow-hidden">
+            <div className="relative w-full aspect-[318/350] bg-white rounded-[24px] md:rounded-[30px] p-[4px] md:p-[6px] shadow-sm border border-white overflow-hidden shimmer-sweep">
                 {/* Gray Inner Background with Image filling it */}
                 <div className="relative w-full h-full bg-[#ECEEF0] rounded-[20px] md:rounded-[24px] overflow-hidden">
                     {/* Status Badge - Responsive sizing */}
@@ -45,7 +45,7 @@ const ProductCard = ({ id, image, title, price, isNew = true }: ProductCardProps
                     )}
 
                     {/* Product Image */}
-                    <div className="relative w-full h-full transform transition-transform duration-500 group-hover:scale-110">
+                    <div className="relative w-full h-full transform transition-transform duration-700 ease-out group-hover:scale-105">
                         <Image
                             src={image}
                             alt={title}

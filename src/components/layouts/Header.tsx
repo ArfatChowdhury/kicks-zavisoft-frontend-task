@@ -27,19 +27,20 @@ const Header = () => {
 
                     {/* Desktop Navigation Links */}
                     <nav className="hidden md:flex items-center gap-8 font-bold text-sm text-[#232321]">
-                        <Link href="/new-drops" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                            New Drops 🔥
+                        <Link href="/new-drops" className="relative group py-1">
+                            <span>New Drops 🔥</span>
+                            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#4A69E2] transition-all duration-300 group-hover:w-full"></span>
                         </Link>
-                        <div className="group relative">
-                            <Link href="/men" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                                Men <ChevronDown size={16} />
-                            </Link>
-                        </div>
-                        <div className="group relative">
-                            <Link href="/women" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                                Women <ChevronDown size={16} />
-                            </Link>
-                        </div>
+                        <Link href="/men" className="relative group py-1 flex items-center gap-1">
+                            <span>Men</span>
+                            <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+                            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#4A69E2] transition-all duration-300 group-hover:w-full"></span>
+                        </Link>
+                        <Link href="/women" className="relative group py-1 flex items-center gap-1">
+                            <span>Women</span>
+                            <ChevronDown size={14} className="transition-transform duration-300 group-hover:rotate-180" />
+                            <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#4A69E2] transition-all duration-300 group-hover:w-full"></span>
+                        </Link>
                     </nav>
                 </div>
 
@@ -60,19 +61,20 @@ const Header = () => {
                 {/* Right Section (Equal Width for Center Alignment) */}
                 <div className="flex-1 flex items-center justify-end gap-2 md:gap-4 text-[#171717]">
                     {/* Search only on Desktop */}
-                    <button className="hidden md:block hover:text-gray-600 transition-colors cursor-pointer p-2">
+                    <button className="hidden md:block hover:text-[#4A69E2] transition-colors p-2">
                         <Search size={22} strokeWidth={2} />
                     </button>
 
                     {/* User Icon always visible */}
-                    <button className="hover:text-gray-600 transition-colors cursor-pointer p-2">
+                    <button className="hover:text-[#4A69E2] transition-colors p-2">
                         <User size={20} className="md:w-[22px]" strokeWidth={2} />
                     </button>
 
                     {/* Cart Badge always visible */}
                     <Link
                         href="/cart"
-                        className="relative hover:opacity-90 transition-opacity cursor-pointer bg-[#F5A623] rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-bold text-xs md:text-sm text-[#232321]"
+                        key={itemCount} // Key change triggers animation
+                        className={`relative hover:opacity-90 transition-all active:scale-90 cursor-pointer bg-[#F5A623] rounded-full w-8 h-8 md:w-10 md:h-10 flex items-center justify-center font-bold text-xs md:text-sm text-[#232321] ${itemCount > 0 ? 'animate-pop' : ''}`}
                     >
                         {itemCount}
                     </Link>

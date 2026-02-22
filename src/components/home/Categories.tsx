@@ -14,7 +14,7 @@ interface Category {
     image: string;
 }
 
-const CategoryCard = ({ category }: { category: Category }) => {
+const CategoryCard = ({ category, index = 0 }: { category: Category, index?: number }) => {
     // Force mixed case for the title to match Figma precisely
     const formattedName = category.name
         .toLowerCase()
@@ -23,8 +23,10 @@ const CategoryCard = ({ category }: { category: Category }) => {
         .join(' ');
 
     return (
-        <div className="
-            relative overflow-hidden group cursor-pointer bg-[#ECEEF0] transition-all duration-500
+        <div
+            style={{ animationDelay: `${index * 100}ms` }}
+            className="
+            relative overflow-hidden group cursor-pointer bg-[#ECEEF0] transition-all duration-500 animate-fade-up
             /* Mobile: sizing is handled by the slide container */
             w-full h-[300px] border-b border-[#232321]/5 last:border-b-0 flex-shrink-0
             /* Desktop: horizontal carousel slide sizing */
@@ -210,8 +212,8 @@ const Categories = () => {
                             <div className="flex touch-pan-y">
                                 {categoryPairs.map((pair, pIdx) => (
                                     <div key={pIdx} className="flex-[0_0_100%] min-w-0 flex flex-col h-[600px]">
-                                        {pair.map((category) => (
-                                            <CategoryCard key={category.id} category={category} />
+                                        {pair.map((category, idx) => (
+                                            <CategoryCard key={category.id} category={category} index={pIdx * 2 + idx} />
                                         ))}
                                     </div>
                                 ))}

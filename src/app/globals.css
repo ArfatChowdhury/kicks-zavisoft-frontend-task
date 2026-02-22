@@ -10,6 +10,59 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-rubik);
+
+  /* Animations */
+  --animate-pop: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --animate-heartbeat: heartbeat 0.8s ease-in-out;
+  --animate-fade-up: fade-up 0.6s ease-out;
+
+  @keyframes pop {
+    0% {
+      transform: scale(0.8);
+    }
+
+    50% {
+      transform: scale(1.2);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes heartbeat {
+    0% {
+      transform: scale(1);
+    }
+
+    14% {
+      transform: scale(1.3);
+    }
+
+    28% {
+      transform: scale(1);
+    }
+
+    42% {
+      transform: scale(1.3);
+    }
+
+    70% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 html,
@@ -20,4 +73,35 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+}
+
+/* Global Button Hover & Active states */
+button,
+.btn-primary {
+  @apply transition-all duration-200 active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50;
+}
+
+.hover-lift {
+  @apply transition-transform duration-300 hover:-translate-y-1;
+}
+
+.shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transform: skewX(-25deg);
+  transition: 0.5s;
+}
+
+.shimmer-sweep:hover::after {
+  left: 150%;
 }

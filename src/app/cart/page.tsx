@@ -17,6 +17,7 @@ export default function CartPage() {
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [loadingRelated, setLoadingRelated] = useState(true);
     const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+    const [removingIds, setRemovingIds] = useState<string[]>([]);
 
     // Calculate totals
     const itemsTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -86,9 +87,14 @@ export default function CartPage() {
                         </div>
 
                         {/* Cart Items List */}
-                        <div className="flex flex-col gap-8 mt-4">
-                            {cartItems.map(item => (
-                                <div key={item.cartId} className="flex gap-4 lg:gap-6 pb-8 lg:pb-8 border-b border-[#232321]/10 last:border-0 last:pb-0">
+                        <div className="flex flex-col gap-8 mt-4 overflow-hidden">
+                            {cartItems.map((item, idx) => (
+                                <div
+                                    key={item.cartId}
+                                    style={{ animationDelay: `${idx * 50}ms` }}
+                                    className={`flex gap-4 lg:gap-6 pb-8 lg:pb-8 border-b border-[#232321]/10 last:border-0 last:pb-0 transition-all duration-300 ${removingIds.includes(item.cartId) ? 'animate-out slide-out-to-right fade-out' : 'animate-fade-up'
+                                        }`}
+                                >
                                     {/* Item Image */}
                                     <div className="relative w-[150px] aspect-[4/5] lg:w-[160px] lg:h-[160px] lg:aspect-square bg-[#F0F0EE] border border-[#E7E7E3] rounded-[24px] lg:rounded-[32px] overflow-hidden shrink-0 flex items-center justify-center p-2">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
