@@ -4,6 +4,7 @@ A high-end, responsive sneaker store web application built with **Next.js 15**, 
 
 ## 🚀 Live Demo
 **[Live Project Site](https://kicks-zavisoft-frontend-task-q49v.vercel.app/)**
+https://kicks-zavisoft-frontend-task-q49v.vercel.app/
 
 ---
 
