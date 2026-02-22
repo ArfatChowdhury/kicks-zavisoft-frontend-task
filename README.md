@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# KICKS - Frontend Implementation Task
 
-## Getting Started
+A responsive sneaker store web application built with Next.js, TypeScript, and Redux, integrating the Platzi Fake Store API.
 
-First, run the development server:
+## 🚀 Live Demo
+[Live Deployment URL](https://kicks-store-task.vercel.app/) *(Placeholder)*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠 Tech Stack
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **State Management**: Redux Toolkit (Cart functionality)
+- **Data Fetching**: Axios
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
+- **Carousel**: Embla Carousel
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
+### Core Requirements
+- **Landing Page**:
+  - Dynamic "New Drops" product listing via API.
+  - Interactive "Categories" carousel fetching live data.
+  - Fully responsive Hero and Review sections.
+- **Product Detail Page**:
+  - Live data fetching for individual products.
+  - **Pixel-perfect Image Magnifier** for detailed view.
+  - Size and Color selectors with local state.
+  - Related products implementation ("You may also like").
+- **API Integration**: Complete integration with Platzi Fake Store API for products and categories.
+- **Responsive Design**: Tailored layouts for Mobile and Desktop.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Bonus Features
+- **Cart Page**:
+  - Full Redux-based state management.
+  - Add/Remove items.
+  - Update quantity and size from the cart.
+  - Favorite (Heart) toggle functionality.
+- **UI/UX Polish**:
+  - Loading skeletons for API requests.
+  - Hover animations and smooth transitions.
+  - Micro-interactions on buttons and navigation.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Setup Instructions
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/ArfatChowdhury/kicks-zavisoft-frontend-task.git
+   cd kicks-zavisoft-frontend-task
+   ```
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+3. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+4. **Build for production**:
+   ```bash
+   npm run build
+   ```
 
-## Learn More
+## 📝 Notes
+- Handled API data cleaning (e.g., parsing image URL strings from Platzi API).
+- Footer restructured to match Figma spacing exactly.
+- Implemented vertical-pair carousel logic for mobile categories.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

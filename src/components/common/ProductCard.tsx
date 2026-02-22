@@ -24,7 +24,10 @@ const ProductCard = ({ id, image, title, price, isNew = true }: ProductCardProps
             id: Number(id),
             title,
             price: Number(price),
-            image
+            image,
+            size: 38,
+            color: 'navy',
+            colorName: 'Shadow Navy'
         }));
     };
 

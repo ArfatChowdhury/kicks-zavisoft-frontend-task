@@ -18,29 +18,36 @@ const Header = () => {
         <header className="px-4 py-6 md:py-8 transition-all duration-300">
             <div className="max-w-[1400px] mx-auto bg-white rounded-[16px] md:rounded-[24px] px-4 md:px-8 py-3 md:py-4 flex items-center justify-between shadow-sm border border-[#FAFAFA]">
 
-                {/* Mobile Menu Icon (Left) */}
-                <button className="md:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors">
-                    <Menu size={24} className="text-[#232321]" />
-                </button>
+                {/* Left Section (Equal Width for Center Alignment) */}
+                <div className="flex-1 flex items-center justify-start">
+                    {/* Mobile Menu Icon */}
+                    <button className="md:hidden p-2 hover:bg-gray-50 rounded-lg transition-colors -ml-2">
+                        <Menu size={24} className="text-[#232321]" />
+                    </button>
 
-                {/* Desktop Navigation Links */}
-                <nav className="hidden md:flex items-center gap-8 font-bold text-sm text-[#232321]">
-                    <Link href="/new-drops" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                        New Drops 🔥
-                    </Link>
-                    <Link href="/men" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                        Men <ChevronDown size={16} />
-                    </Link>
-                    <Link href="/women" className="hover:opacity-60 transition-opacity flex items-center gap-1">
-                        Women <ChevronDown size={16} />
-                    </Link>
-                </nav>
+                    {/* Desktop Navigation Links */}
+                    <nav className="hidden md:flex items-center gap-8 font-bold text-sm text-[#232321]">
+                        <Link href="/new-drops" className="hover:opacity-60 transition-opacity flex items-center gap-1">
+                            New Drops 🔥
+                        </Link>
+                        <div className="group relative">
+                            <Link href="/men" className="hover:opacity-60 transition-opacity flex items-center gap-1">
+                                Men <ChevronDown size={16} />
+                            </Link>
+                        </div>
+                        <div className="group relative">
+                            <Link href="/women" className="hover:opacity-60 transition-opacity flex items-center gap-1">
+                                Women <ChevronDown size={16} />
+                            </Link>
+                        </div>
+                    </nav>
+                </div>
 
-                {/* Logo (Centered on Mobile/Desktop) */}
-                <div className="flex-1 flex justify-center">
+                {/* Center Section: Logo (Perfectly Centered) */}
+                <div className="flex-shrink-0 flex justify-center">
                     <Link href="/" className="flex items-center">
                         <Image
-                            src="/image.png"
+                            src="/m-logo.png"
                             alt="KICKS"
                             width={120}
                             height={40}
@@ -50,8 +57,8 @@ const Header = () => {
                     </Link>
                 </div>
 
-                {/* Action Icons (Right) */}
-                <div className="flex items-center gap-2 md:gap-6 text-[#171717]">
+                {/* Right Section (Equal Width for Center Alignment) */}
+                <div className="flex-1 flex items-center justify-end gap-2 md:gap-4 text-[#171717]">
                     {/* Search only on Desktop */}
                     <button className="hidden md:block hover:text-gray-600 transition-colors cursor-pointer p-2">
                         <Search size={22} strokeWidth={2} />

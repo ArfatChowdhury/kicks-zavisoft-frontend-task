@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import api from '@/lib/api'
 import ProductCard from '../common/ProductCard'
+import ApiState from '../common/ApiState'
 
 interface Product {
     id: number;
@@ -15,21 +16,33 @@ interface Product {
 const Hero = () => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const fetchProducts = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await api.get('/products?categoryId=4&offset=0&limit=4');
+            setProducts(response.data);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            setError('Failed to load new drops. Please check your connection.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await api.get('/products?categoryId=4&offset=0&limit=4');
-                setProducts(response.data);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchProducts();
     }, []);
+
+    const NewDropsSkeleton = (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="aspect-square bg-white/10 animate-pulse rounded-[16px] md:rounded-[32px]" />
+            ))}
+        </div>
+    );
 
     return (
         <section className="max-w-[1400px] mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col gap-6 md:gap-12 transition-all duration-300">
@@ -96,13 +109,14 @@ const Hero = () => {
                     </button>
                 </div>
 
-                {loading ? (
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="aspect-square bg-gray-200 animate-pulse rounded-[16px] md:rounded-[32px]" />
-                        ))}
-                    </div>
-                ) : (
+                <ApiState
+                    loading={loading}
+                    error={error}
+                    isEmpty={products.length === 0}
+                    onRetry={fetchProducts}
+                    skeleton={NewDropsSkeleton}
+                    emptyMessage="New drops arriving soon!"
+                >
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         {products.map((product) => (
                             <ProductCard
@@ -114,7 +128,7 @@ const Hero = () => {
                             />
                         ))}
                     </div>
-                )}
+                </ApiState>
             </div>
         </section>
     )

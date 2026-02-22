@@ -6,6 +6,7 @@ import api from '@/lib/api';
 import { useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/features/cartSlice';
 import YouMayAlsoLike, { Product } from '@/components/common/YouMayAlsoLike';
+import ApiState from '@/components/common/ApiState';
 
 // ── Pixel-perfect Magnifier ──────────────────────────────────────
 const LENS_SIZE = 180;
@@ -84,29 +85,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     const [product, setProduct] = useState<Product | null>(null);
     const [related, setRelated] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [selectedSize, setSelectedSize] = useState<number>(38);
     const [selectedColor, setSelectedColor] = useState('navy');
     const [selectedImg, setSelectedImg] = useState(0);
 
+    const fetchProduct = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const [productRes, relatedRes] = await Promise.all([
+                api.get(`/products/${id}`),
+                api.get('/products?categoryId=4&offset=0&limit=8') // Match Hero.tsx new drops
+            ]);
+            setProduct(productRes.data);
+            const others = (relatedRes.data as Product[]).filter(
+                (p: Product) => p.id !== Number(id)
+            );
+            setRelated(others);
+        } catch (err: any) {
+            console.error('Failed to fetch product:', err);
+            setError(err.response?.status === 404 ? 'Product not found.' : 'Failed to load product details.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchProduct = async () => {
-            try {
-                setLoading(true);
-                const [productRes, relatedRes] = await Promise.all([
-                    api.get(`/products/${id}`),
-                    api.get('/products?categoryId=4&offset=0&limit=8') // Match Hero.tsx new drops
-                ]);
-                setProduct(productRes.data);
-                const others = (relatedRes.data as Product[]).filter(
-                    (p: Product) => p.id !== Number(id)
-                );
-                setRelated(others);
-            } catch (error) {
-                console.error('Failed to fetch product:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchProduct();
     }, [id]);
 
@@ -135,19 +140,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         }
     };
 
-    if (loading) {
-        return (
-            <main className="bg-[#E7E7E3] min-h-screen pt-20 flex items-center justify-center">
-                <div className="animate-pulse text-[#232321] font-bold text-2xl font-rubik">Loading...</div>
-            </main>
-        );
-    }
+    const ProductSkeleton = (
+        <main className="bg-[#E7E7E3] min-h-screen pt-20 flex flex-col items-center justify-center">
+            <div className="animate-pulse text-[#232321]/40 font-bold text-2xl font-rubik uppercase tracking-widest">
+                Loading Product...
+            </div>
+        </main>
+    );
 
-    if (!product) {
+    if (loading || error || !product) {
         return (
-            <main className="bg-[#E7E7E3] min-h-screen pt-20 flex items-center justify-center">
-                <div className="text-[#232321] font-bold text-2xl font-rubik">Product not found.</div>
-            </main>
+            <ApiState
+                loading={loading}
+                error={error}
+                isEmpty={!loading && !error && !product}
+                onRetry={fetchProduct}
+                skeleton={ProductSkeleton}
+                emptyMessage="We couldn't find the product you're looking for."
+            />
         );
     }
 

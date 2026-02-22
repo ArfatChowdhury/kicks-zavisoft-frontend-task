@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, ArrowUpRight } from 'lucide-react'
 import useEmblaCarousel from 'embla-carousel-react'
 import api from '@/lib/api'
+import ApiState from '../common/ApiState'
 
 interface Category {
     id: number;
@@ -63,6 +64,7 @@ const CategoryCard = ({ category }: { category: Category }) => {
 const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [canScrollPrev, setCanScrollPrev] = useState(false)
     const [canScrollNext, setCanScrollNext] = useState(false)
 
@@ -98,59 +100,62 @@ const Categories = () => {
         activeApi?.scrollNext()
     }, [emblaApiMobile, emblaApiDesktop]);
 
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await api.get('/categories');
-                let data: Category[] = response.data;
+    const fetchCategories = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await api.get('/categories');
+            let data: Category[] = response.data;
 
-                // 1. Fix spelling for "miscellaneos" -> "Miscellaneous"
-                data = data.map(cat => ({
-                    ...cat,
-                    name: cat.name.toLowerCase().includes('miscellane') ? 'Miscellaneous' : cat.name
-                }));
+            // 1. Fix spelling for "miscellaneos" -> "Miscellaneous"
+            data = data.map(cat => ({
+                ...cat,
+                name: cat.name.toLowerCase().includes('miscellane') ? 'Miscellaneous' : cat.name
+            }));
 
-                // 2. Define priority names (provided by user)
-                const priorityNames = ['electronics', 'shoes', 'furniture', 'miscellaneous'];
+            // 2. Define priority names (provided by user)
+            const priorityNames = ['electronics', 'shoes', 'furniture', 'miscellaneous'];
 
-                // 3. Sort logic:
-                // Priority #1: Has image AND is in priorityNames
-                // Priority #2: Has image but NOT in priorityNames
-                // Priority #3: NO image
-                data.sort((a, b) => {
-                    const aHasImage = !!a.image && a.image.length > 5;
-                    const bHasImage = !!b.image && b.image.length > 5;
-                    const aNameLower = a.name.toLowerCase();
-                    const bNameLower = b.name.toLowerCase();
-                    const aIsPriority = priorityNames.includes(aNameLower);
-                    const bIsPriority = priorityNames.includes(bNameLower);
+            // 3. Sort logic:
+            data.sort((a, b) => {
+                const aHasImage = !!a.image && a.image.length > 5;
+                const bHasImage = !!b.image && b.image.length > 5;
+                const aNameLower = a.name.toLowerCase();
+                const bNameLower = b.name.toLowerCase();
+                const aIsPriority = priorityNames.includes(aNameLower);
+                const bIsPriority = priorityNames.includes(bNameLower);
 
-                    // Image presence is the first filter
-                    if (aHasImage && !bHasImage) return -1;
-                    if (!aHasImage && bHasImage) return 1;
+                if (aHasImage && !bHasImage) return -1;
+                if (!aHasImage && bHasImage) return 1;
 
-                    // If both have images, use priority names
-                    if (aHasImage && bHasImage) {
-                        if (aIsPriority && !bIsPriority) return -1;
-                        if (!aIsPriority && bIsPriority) return 1;
-
-                        // If both are priority or both are not, maintain relative order or alphabetical
-                        return aNameLower.localeCompare(bNameLower);
-                    }
-
-                    // If neither have images, just sort alphabetically
+                if (aHasImage && bHasImage) {
+                    if (aIsPriority && !bIsPriority) return -1;
+                    if (!aIsPriority && bIsPriority) return 1;
                     return aNameLower.localeCompare(bNameLower);
-                });
+                }
+                return aNameLower.localeCompare(bNameLower);
+            });
 
-                setCategories(data);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
+            setCategories(data);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            setError('Failed to load categories.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchCategories();
     }, []);
+
+    const CategoriesSkeleton = (
+        <div className="w-full h-full flex items-center justify-center">
+            <div className="animate-pulse text-[#232321]/40 font-bold uppercase tracking-widest font-rubik text-xl">
+                Preparing Collections...
+            </div>
+        </div>
+    );
 
     // Helper to chunk categories into pairs for mobile slides
     const categoryPairs = Array.from({ length: Math.ceil(categories.length / 2) }, (_, i) =>
@@ -192,41 +197,36 @@ const Categories = () => {
 
             <div className="px-6 md:px-0 md:pl-10 lg:pl-[calc((100vw-1400px)/2+40px)]">
                 <div className="rounded-tl-[32px] md:rounded-tl-[64px] rounded-tr-none rounded-bl-none rounded-br-none overflow-hidden bg-[#ECEEF0] shadow-2xl">
-
-                    {/* MOBILE: Horizontal Carousel of Vertical Pairs */}
-                    <div className="md:hidden overflow-hidden h-[600px] embla" ref={emblaRefMobile}>
-                        <div className="flex touch-pan-y">
-                            {loading ? (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <div className="animate-pulse text-[#232321] font-bold">Loading...</div>
-                                </div>
-                            ) : (
-                                categoryPairs.map((pair, pIdx) => (
+                    <ApiState
+                        loading={loading}
+                        error={error}
+                        isEmpty={categories.length === 0}
+                        onRetry={fetchCategories}
+                        skeleton={CategoriesSkeleton}
+                        emptyMessage="Check back soon for new sneaker categories!"
+                    >
+                        {/* MOBILE: Horizontal Carousel of Vertical Pairs */}
+                        <div className="md:hidden overflow-hidden h-[600px] embla" ref={emblaRefMobile}>
+                            <div className="flex touch-pan-y">
+                                {categoryPairs.map((pair, pIdx) => (
                                     <div key={pIdx} className="flex-[0_0_100%] min-w-0 flex flex-col h-[600px]">
                                         {pair.map((category) => (
                                             <CategoryCard key={category.id} category={category} />
                                         ))}
                                     </div>
-                                ))
-                            )}
+                                ))}
+                            </div>
                         </div>
-                    </div>
 
-                    {/* DESKTOP: Standard Horizontal Embla Carousel */}
-                    <div className="hidden md:block overflow-hidden h-[600px] embla" ref={emblaRefDesktop}>
-                        <div className="flex">
-                            {loading ? (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <div className="animate-pulse text-[#232321] font-bold">Loading...</div>
-                                </div>
-                            ) : (
-                                categories.map((category) => (
+                        {/* DESKTOP: Standard Horizontal Embla Carousel */}
+                        <div className="hidden md:block overflow-hidden h-[600px] embla" ref={emblaRefDesktop}>
+                            <div className="flex">
+                                {categories.map((category) => (
                                     <CategoryCard key={category.id} category={category} />
-                                ))
-                            )}
+                                ))}
+                            </div>
                         </div>
-                    </div>
-
+                    </ApiState>
                 </div>
             </div>
         </section>
