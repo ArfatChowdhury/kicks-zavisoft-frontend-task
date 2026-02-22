@@ -49,11 +49,32 @@ const cartSlice = createSlice({
                 item.quantity = action.payload.quantity;
             }
         },
+        updateSize: (state, action: PayloadAction<{ cartId: string; newSize: number }>) => {
+            const { cartId, newSize } = action.payload;
+            const existingItemIndex = state.items.findIndex((i) => i.cartId === cartId);
+            if (existingItemIndex === -1) return;
+
+            const item = state.items[existingItemIndex];
+            const newCartId = `${item.id}-${newSize}-${item.color}`;
+
+            // Check if changing to this new size means merging with another item
+            const targetItemIndex = state.items.findIndex((i) => i.cartId === newCartId);
+
+            if (targetItemIndex !== -1 && targetItemIndex !== existingItemIndex) {
+                // Merge quantities and remove the original item
+                state.items[targetItemIndex].quantity += item.quantity;
+                state.items.splice(existingItemIndex, 1);
+            } else {
+                // Just update size and cartId in place
+                item.size = newSize;
+                item.cartId = newCartId;
+            }
+        },
         clearCart: (state) => {
             state.items = [];
         },
     },
 });
 
-export const { toggleCart, addItem, removeItem, updateQuantity, clearCart } = cartSlice.actions;
+export const { toggleCart, addItem, removeItem, updateQuantity, updateSize, clearCart } = cartSlice.actions;
 export default cartSlice.reducer;

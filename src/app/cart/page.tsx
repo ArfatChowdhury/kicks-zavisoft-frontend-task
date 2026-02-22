@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Heart, Trash2 } from 'lucide-react';
+import { Heart, Trash2, ChevronDown } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
-import { updateQuantity, removeItem } from '@/store/features/cartSlice';
+import { updateQuantity, removeItem, updateSize } from '@/store/features/cartSlice';
+
+const SIZES = [38, 39, 40, 41, 42, 43, 44, 45, 46, 47];
 import YouMayAlsoLike, { Product } from '@/components/common/YouMayAlsoLike';
 import api from '@/lib/api';
 
@@ -14,6 +16,7 @@ export default function CartPage() {
 
     const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
     const [loadingRelated, setLoadingRelated] = useState(true);
+    const [favorites, setFavorites] = useState<Record<string, boolean>>({});
 
     // Calculate totals
     const itemsTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -41,8 +44,16 @@ export default function CartPage() {
         dispatch(updateQuantity({ cartId, quantity: newQuantity }));
     };
 
+    const handleSizeChange = (cartId: string, newSize: number) => {
+        dispatch(updateSize({ cartId, newSize }));
+    };
+
     const handleRemove = (cartId: string) => {
         dispatch(removeItem(cartId));
+    };
+
+    const toggleFavorite = (cartId: string) => {
+        setFavorites(prev => ({ ...prev, [cartId]: !prev[cartId] }));
     };
 
     return (
@@ -98,25 +109,33 @@ export default function CartPage() {
                                                 <div className="flex gap-4 mt-1 lg:mt-2">
                                                     <div className="flex items-center gap-1.5">
                                                         <span className="text-[13px] lg:text-sm font-medium text-[#232321]/70">Size</span>
-                                                        <select
-                                                            className="text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none"
-                                                            value={item.size}
-                                                            disabled
-                                                        >
-                                                            <option>{item.size}</option>
-                                                        </select>
+                                                        <div className="relative flex items-center">
+                                                            <select
+                                                                className="peer text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none pr-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                value={item.size}
+                                                                onChange={(e) => handleSizeChange(item.cartId, Number(e.target.value))}
+                                                            >
+                                                                {SIZES.map(s => (
+                                                                    <option key={s} value={s}>{s}</option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDown className="absolute right-0 pointer-events-none text-[#232321] peer-disabled:opacity-50" size={16} strokeWidth={2} />
+                                                        </div>
                                                     </div>
                                                     <div className="flex items-center gap-1.5">
                                                         <span className="text-[13px] lg:text-sm font-medium text-[#232321]/70">Quantity</span>
-                                                        <select
-                                                            className="text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none"
-                                                            value={item.quantity}
-                                                            onChange={(e) => handleQuantityChange(item.cartId, Number(e.target.value))}
-                                                        >
-                                                            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
-                                                                <option key={n} value={n}>{n}</option>
-                                                            ))}
-                                                        </select>
+                                                        <div className="relative flex items-center">
+                                                            <select
+                                                                className="peer text-[13px] lg:text-sm font-bold text-[#232321] bg-transparent outline-none cursor-pointer appearance-none pr-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                                                value={item.quantity}
+                                                                onChange={(e) => handleQuantityChange(item.cartId, Number(e.target.value))}
+                                                            >
+                                                                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
+                                                                    <option key={n} value={n}>{n}</option>
+                                                                ))}
+                                                            </select>
+                                                            <ChevronDown className="absolute right-0 pointer-events-none text-[#232321] peer-disabled:opacity-50" size={16} strokeWidth={2} />
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -127,8 +146,11 @@ export default function CartPage() {
 
                                                 {/* Item Actions */}
                                                 <div className="flex items-center gap-4 mt-2 lg:mt-3">
-                                                    <button className="text-[#232321] hover:text-[#4A69E2] transition-colors">
-                                                        <Heart size={20} strokeWidth={1.5} />
+                                                    <button
+                                                        onClick={() => toggleFavorite(item.cartId)}
+                                                        className="text-[#232321] hover:text-[#4A69E2] transition-colors"
+                                                    >
+                                                        <Heart size={20} strokeWidth={1.5} fill={favorites[item.cartId] ? "currentColor" : "none"} />
                                                     </button>
                                                     <button
                                                         onClick={() => handleRemove(item.cartId)}
@@ -179,8 +201,8 @@ export default function CartPage() {
                                 CHECKOUT
                             </button>
 
-                            <button className="w-full text-left text-[#232321] font-medium text-sm mt-1 transition-opacity hover:opacity-70">
-                                User a promo code
+                            <button className="w-full text-left text-[#232321] font-medium text-sm mt-1 transition-opacity hover:opacity-70 underline underline-offset-4 decoration-[#232321]/30 hover:decoration-[#232321]">
+                                Use a promo code
                             </button>
                         </div>
                     </div>
