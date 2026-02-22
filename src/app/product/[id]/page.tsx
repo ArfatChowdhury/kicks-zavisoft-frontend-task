@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { Heart } from 'lucide-react';
+import { Heart, Check } from 'lucide-react';
 import api from '@/lib/api';
 import { useAppDispatch } from '@/store/hooks';
 import { addItem } from '@/store/features/cartSlice';
@@ -115,8 +115,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         fetchProduct();
     }, [id]);
 
+    const [isAdded, setIsAdded] = useState(false);
+
     const handleAddToCart = () => {
         if (!product) return;
+
+        // Success animation
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
+
         const colorName = COLORS.find(c => c.id === selectedColor)?.name || selectedColor;
         dispatch(addItem({
             id: product.id,
@@ -287,9 +294,20 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                             <div className="flex gap-3">
                                 <button
                                     onClick={handleAddToCart}
-                                    className="flex-grow bg-[#232321] hover:bg-black text-white h-14 rounded-xl font-bold uppercase tracking-wide font-rubik transition-all"
+                                    disabled={isAdded}
+                                    className={`flex-grow h-14 rounded-xl font-bold uppercase tracking-wide font-rubik transition-all duration-300 flex items-center justify-center gap-2 ${isAdded
+                                        ? 'bg-[#4A69E2] text-white scale-[1.02] shadow-lg'
+                                        : 'bg-[#232321] hover:bg-black text-white hover:scale-[1.01]'
+                                        }`}
                                 >
-                                    Add to Cart
+                                    {isAdded ? (
+                                        <>
+                                            <Check size={20} className="animate-in zoom-in duration-300" />
+                                            Added to Cart
+                                        </>
+                                    ) : (
+                                        'Add to Cart'
+                                    )}
                                 </button>
                                 <button className="w-14 h-14 bg-[#232321] hover:bg-black text-white flex items-center justify-center rounded-xl transition-all">
                                     <Heart size={22} />
